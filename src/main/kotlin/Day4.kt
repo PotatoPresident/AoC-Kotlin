@@ -1,12 +1,9 @@
 class Day4 {
-    val sections = readInput(4).map {
-        val pair = it.split(",").let { it[0] to it[1] }
-        return@map pair.first.toRange() to pair.second.toRange()
+    val sections = readInput(4).csv().map {
+        return@map it[0].toRange() to it[1].toRange()
     }
 
-    fun String.toRange() = split("-").let { it[0].toInt()..it[1].toInt() }
-    fun IntRange.contains(other: IntRange) = other.all { this.contains(it) }
-    fun IntRange.overlaps(other: IntRange) = other.any { this.contains(it) }
+    fun String.toRange() = split("-").ints().let { it[0]..it[1] }
 
     fun part1() = sections.filter { it.first.contains(it.second) || it.second.contains(it.first) }.size
 
