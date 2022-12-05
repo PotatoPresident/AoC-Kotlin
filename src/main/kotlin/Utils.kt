@@ -6,6 +6,8 @@ fun readInput(day: Int): List<String> = File("src/main/resources", "Day${day}Inp
 fun readRawInput(day: Int): String = File("src/main/resources", "Day${day}Input.txt")
     .readText().replace("\r", "").trim()
 
+fun String.findInts() : List<Int> = Regex("""\d+""").findAll(this).map { it.value.toInt() }.toList()
+
 fun List<String>.ints() = map(String::toInt)
 fun List<String>.csv() = map { it.split(",") }
 

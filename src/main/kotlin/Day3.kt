@@ -23,20 +23,7 @@ class Day3 {
 
     fun part1() = compartments.map { findDuplicates(it.toList()) }.sumOf { it.sumOf { it.priority } }
 
-    fun part2(): Int {
-        var count = 0
-        var sum = 0
-
-        for (i in 0 until sacks.size/3) {
-            val group = sacks.subList(count, 3 + count)
-            val badge = findDuplicates(group).first()
-            sum += badge.priority
-
-            count += 3
-        }
-
-        return sum
-    }
+    fun part2()= sacks.windowed(3, 3).sumOf { findDuplicates(it).first().priority }
 }
 
 fun main() {
