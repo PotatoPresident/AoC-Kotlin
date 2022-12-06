@@ -4,34 +4,9 @@
 fun main() = puzzle(2022, 6) {
     val datastream = input
     submit {
-        datastream.windowed(4).withIndex().find { (i, s) -> 
-            val chars = mutableSetOf<Char>()
-            for (char in s) {
-                if (chars.contains(char)) {
-                    return@find false
-                } else {
-                    chars.add(char)
-                }
-            }
-            println(s)
-            
-            true
-        }!!.index + 4
+        datastream.windowed(4).indexOfFirst { it.toList().allDistinct() } + 4
     }
-
     submit {
-        datastream.windowed(14).withIndex().find { (i, s) ->
-            val chars = mutableSetOf<Char>()
-            for (char in s) {
-                if (chars.contains(char)) {
-                    return@find false
-                } else {
-                    chars.add(char)
-                }
-            }
-            println(s)
-
-            true
-        }!!.index + 14
+        datastream.windowed(14).indexOfFirst { it.toList().allDistinct() } + 14
     }
 }

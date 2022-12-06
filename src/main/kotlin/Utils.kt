@@ -51,6 +51,7 @@ fun <T> Iterable<Iterable<T>>.transpose(): List<List<T>> {
 
     return ret
 }
+fun <T> Iterable<T>.allDistinct () = toSet().size == count()
 
 fun IntRange.contains(other: IntRange) = other.all { this.contains(it) }
 fun IntRange.overlaps(other: IntRange) = other.intersect(this).isNotEmpty()
