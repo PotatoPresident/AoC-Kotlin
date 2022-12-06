@@ -2,21 +2,11 @@
  * [AOC 2022 Day 5](https://adventofcode.com/2022/day/5)
  */
 object Day5 {
-    val trimmedStackInput = readInput(5).takeWhile { it.contains("[") }.map { it.padEnd(it.length + 1) }
+    private fun readInput() {
+    }
 
-    val stacks: List<ArrayDeque<Char>> =
-        List(trimmedStackInput.sortedByDescending { it.length }.first().length / 4) { ArrayDeque<Char>() }.also { crates ->
-            trimmedStackInput.forEach {
-                for (i in 0 until it.length / 4) {
-                    val symbol = it[(i * 4) + 1]
-                    if (symbol.isLetter()) {
-                        crates[i].addFirst(symbol)
-                    }
-                }
-            }
-        }
-
-    val procedure = readInput(5).dropWhile { it.startsWith("[") || it.startsWith(" ")  || it.isEmpty() }.map { it.findInts() }
+    val procedure =
+        readInput(5).dropWhile { it.startsWith("[") || it.startsWith(" ") || it.isEmpty() }.map { it.findInts() }
 
     fun rearrange(stackList: List<ArrayDeque<Char>>): List<ArrayDeque<Char>> {
         procedure.forEach { (amount, source, target) ->
@@ -42,9 +32,12 @@ object Day5 {
         return stackList
     }
 
-    fun part1() = 1//rearrange(stacks.toMutableList()).forEach { print(it.last()) }.also { println() }
+    fun part1(): List<List<Char>> {
+        val (stacks, procedure) = readInput(5).splitOn { it.isEmpty() }
+        return stacks.dropLast(1).reversed().map { it.toList() }.transpose()
+    }
 
-    fun part2() = rearrange9001(stacks.toList()).forEach { print(it.last()) }.also { println() }
+    fun part2() = 1//rearrange9001(stacks.toList()).forEach { print(it.last()) }.also { println() }
 }
 
 fun main() {
