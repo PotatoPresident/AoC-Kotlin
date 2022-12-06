@@ -32,10 +32,12 @@ fun String.findInts() : List<Int> = Regex("""\d+""").findAll(this).map { it.valu
 
 fun List<String>.ints() = map(String::toInt)
 fun List<String>.csv() = map { it.split(",") }
+fun Iterable<Any>.join() = joinToString("")
 inline fun <T> Iterable<T>.splitOn(predicate: (T) -> Boolean) = fold(listOf(listOf<T>())) { acc, t ->
     if (predicate(t)) acc + listOf(listOf(t))
     else acc.dropLast(1) + listOf(acc.last() + t)
 }
+fun Iterable<String>.splitOnEmpty() = splitOn { it.isEmpty() }
 fun <T> Iterable<Iterable<T>>.transpose(): List<List<T>> {
     val iter = iterator()
     if (!iter.hasNext()) return emptyList()

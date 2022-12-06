@@ -1,47 +1,48 @@
 /**
  * [AOC 2022 Day 5](https://adventofcode.com/2022/day/5)
  */
-object Day5 {
-    private fun readInput() {
-    }
+fun main() = puzzle(2022, 5) {
+    val (stackInput, procedureInput) = readInput(5).splitOnEmpty()
+    val procedure = procedureInput.drop(1).map { it.findInts() }
 
-    val procedure =
-        readInput(5).dropWhile { it.startsWith("[") || it.startsWith(" ") || it.isEmpty() }.map { it.findInts() }
-
-    fun rearrange(stackList: List<ArrayDeque<Char>>): List<ArrayDeque<Char>> {
+    submit {
+        val stacks = stackInput
+            .dropLast(1)
+            .reversed()
+            .map { it.toList() }
+            .transpose()
+            .chunked(4) { it[1] }
+            .map { it.filter { it != ' ' } }
+            .map { ArrayDeque(it) }
+        
         procedure.forEach { (amount, source, target) ->
-            for (i in 0 until amount) {
-                stackList[target - 1].addLast(stackList[source - 1].removeLast())
+            repeat(amount) {
+                stacks[target - 1].addLast(stacks[source - 1].removeLast())
             }
         }
-
-        return stackList
+        
+        stacks.map { it.last() }.join()
     }
-
-    fun rearrange9001(stackList: List<ArrayDeque<Char>>): List<ArrayDeque<Char>> {
+    submit { 
+        val stacks = stackInput
+            .dropLast(1)
+            .reversed()
+            .map { it.toList() }
+            .transpose()
+            .chunked(4) { it[1] }
+            .map { it.filter { it != ' ' } }
+            .map { ArrayDeque(it) }
+        
         procedure.forEach { (amount, source, target) ->
             val crates = mutableListOf<Char>()
-            for (i in 0 until amount) {
-                crates.add(stackList[source - 1].removeLast())
+            repeat(amount) {
+                crates.add(stacks[source - 1].removeLast())
             }
             crates.asReversed().forEach {
-                stackList[target - 1].addLast(it)
+                stacks[target - 1].addLast(it)
             }
         }
-
-        return stackList
+        
+        stacks.map { it.last() }.join()
     }
-
-    fun part1(): List<List<Char>> {
-        val (stacks, procedure) = readInput(5).splitOn { it.isEmpty() }
-        return stacks.dropLast(1).reversed().map { it.toList() }.transpose()
-    }
-
-    fun part2() = 1//rearrange9001(stacks.toList()).forEach { print(it.last()) }.also { println() }
-}
-
-fun main() {
-    val day = Day5
-    println(day.part1())
-    println(day.part2())
 }
