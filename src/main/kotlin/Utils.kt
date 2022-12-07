@@ -12,8 +12,8 @@ data class Puzzle(val input: String): CharSequence by input {
 }
 
 fun puzzle(year: Int, day: Int, action: Puzzle.() -> Unit) {
-    File("src/main/resources", "Day${day}Input.txt")
-        .readText()
+    File("src/main/resources/y$year", "Day${day}.txt")
+        .readText().replace("\r", "")
         .let(::Puzzle)
         .apply(action)
         .results
@@ -22,13 +22,8 @@ fun puzzle(year: Int, day: Int, action: Puzzle.() -> Unit) {
         }
 }
 
-fun readInput(day: Int): List<String> = File("src/main/resources", "Day${day}Input.txt")
-    .readLines()
-
-fun readRawInput(day: Int): String = File("src/main/resources", "Day${day}Input.txt")
-    .readText().replace("\r", "").trim()
-
 fun String.findInts() : List<Int> = Regex("""\d+""").findAll(this).map { it.value.toInt() }.toList()
+fun String.toRange() = split("-").ints().let { it[0]..it[1] }
 
 fun List<String>.ints() = map(String::toInt)
 fun List<String>.csv() = map { it.split(",") }

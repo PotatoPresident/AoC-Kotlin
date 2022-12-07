@@ -1,3 +1,7 @@
+package y22
+
+import puzzle
+
 /**
  * [AOC 2022 Day 7](https://adventofcode.com/2022/day/7)
  */
@@ -14,6 +18,7 @@ fun main() = puzzle(2022, 7) {
                     else -> currentDir.children.first { it.name == dir } as DirectoryNode
                 }
             }
+
             line == "$ ls" -> {}
             line.startsWith("dir") -> currentDir.addChild(DirectoryNode(line.substringAfter("dir ")))
             else -> currentDir.addChild(FileNode(line.substringAfter(" "), line.substringBefore(" ").toInt()))
@@ -50,7 +55,7 @@ class DirectoryNode(name: String) : Node(name, null) {
     }
 
     override fun toString(): String {
-        return "DirectoryNode(name='$name', children=$children)"
+        return "y22.DirectoryNode(name='$name', children=$children)"
     }
 
     fun getAllChildDirectories(): List<DirectoryNode> {
@@ -61,6 +66,6 @@ class DirectoryNode(name: String) : Node(name, null) {
 
 class FileNode(name: String, override val size: Int) : Node(name, null) {
     override fun toString(): String {
-        return "FileNode(name='$name', size=$size)"
+        return "y22.FileNode(name='$name', size=$size)"
     }
 }
