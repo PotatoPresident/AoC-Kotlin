@@ -5,64 +5,47 @@ fun main() = puzzle(2022, 7) {
     val parentNode = DirectoryNode("/")
     var currentDir = parentNode
     inputLines.forEach { line ->
-        if (line.startsWith("$")) {
-            val cmd = line.split(' ')[1]
-            if (cmd == "cd") {
-                val dir = line.split(' ')[2]
-                when (dir) {
-                    "/" -> currentDir = parentNode
-                    ".." -> currentDir = currentDir.parent as DirectoryNode
-                    else -> currentDir = currentDir.children.first { it.name == dir } as DirectoryNode
+        when {
+            line.startsWith("$ cd") -> {
+                val dir = line.substringAfter("cd ")
+                currentDir = when (dir) {
+                    "/" -> parentNode
+                    ".." -> currentDir.parent as DirectoryNode
+                    else -> currentDir.children.first { it.name == dir } as DirectoryNode
                 }
             }
-        }
-
-        if (line.startsWith("dir")) {
-            val dirName = line.split(' ')[1]
-            val node = DirectoryNode(dirName)
-            currentDir.addChild(node)
-        }
-
-        if (line.first().isDigit()) {
-            val fileSize = line.split(' ')[0].toInt()
-            val fileName = line.split(' ')[1]
-            val node = FileNode(fileName, fileSize)
-            currentDir.addChild(node)
+            line == "$ ls" -> {}
+            line.startsWith("dir") -> currentDir.addChild(DirectoryNode(line.substringAfter("dir ")))
+            else -> currentDir.addChild(FileNode(line.substringAfter(" "), line.substringBefore(" ").toInt()))
         }
     }
 
     submit {
-        parentNode.getChildDirectories().filter { it.size <= 100000 }.sumOf { it.size }
+        parentNode.getAllChildDirectories().filter { it.size <= 100000 }.sumOf { it.size }
     }
 
 
     submit {
-        val totalSpace = 70000000
-        val updateSpace = 30000000
-        val usedSpace = parentNode.size //47
-        val unusedSpace = totalSpace - usedSpace
-
-
-        val neededSpace = updateSpace - unusedSpace
-
-
-        val node = parentNode.getChildDirectories().filter { it.size >= neededSpace }.minBy { it.size }
-        println("Needed Space $neededSpace. ${node.size}")
-        node.name
+        val neededSpace = 30000000 - (70000000 - parentNode.size)
+        parentNode.getAllChildDirectories().filter { it.size >= neededSpace }.minBy { it.size }.size
     }
 }
 
-abstract class Node(val name: String, var parent: Node?)
+sealed class Node(val name: String, internal var parent: DirectoryNode?) {
+    abstract val size: Int
+}
 
 class DirectoryNode(name: String) : Node(name, null) {
-    var children: MutableList<Node> = mutableListOf()
-    val size: Int
-        get() = children.sumOf {
+    private var _children: MutableList<Node> = mutableListOf()
+    val children: List<Node> get() = _children
+
+    override val size: Int
+        get() = _children.sumOf {
             if (it is FileNode) it.size else (it as DirectoryNode).size
         }
 
     fun addChild(child: Node) {
-        children.add(child)
+        _children.add(child)
         child.parent = this
     }
 
@@ -70,13 +53,13 @@ class DirectoryNode(name: String) : Node(name, null) {
         return "DirectoryNode(name='$name', children=$children)"
     }
 
-    fun getChildDirectories(): List<DirectoryNode> {
-        return children.filterIsInstance<DirectoryNode>() + children.filterIsInstance<DirectoryNode>()
-            .flatMap { it.getChildDirectories() }
+    fun getAllChildDirectories(): List<DirectoryNode> {
+        return _children.filterIsInstance<DirectoryNode>() + _children.filterIsInstance<DirectoryNode>()
+            .flatMap { it.getAllChildDirectories() }
     }
 }
 
-class FileNode(name: String, val size: Int) : Node(name, null) {
+class FileNode(name: String, override val size: Int) : Node(name, null) {
     override fun toString(): String {
         return "FileNode(name='$name', size=$size)"
     }
