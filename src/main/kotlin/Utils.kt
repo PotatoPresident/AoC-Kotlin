@@ -49,6 +49,16 @@ fun <T> Iterable<Iterable<T>>.transpose(): List<List<T>> {
     return ret
 }
 fun <T> Iterable<T>.allDistinct () = toSet().size == count()
+fun <T> Iterable<T>.productOf(f: (T) -> Int) = fold(1) { acc, t -> acc * f(t) }
+inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
+    val list = ArrayList<T>()
+    for (item in this) {
+        list.add(item)
+        if (!predicate(item))
+            break
+    }
+    return list
+}
 
 fun IntRange.contains(other: IntRange) = other.all { this.contains(it) }
 fun IntRange.overlaps(other: IntRange) = other.intersect(this).isNotEmpty()

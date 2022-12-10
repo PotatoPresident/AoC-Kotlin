@@ -32,11 +32,7 @@ fun main() = puzzle(2022, 9) {
         val visited = mutableSetOf<Point>()
         
         motions.forEach { (direction, steps) ->
-            println("$direction $steps")
             repeat(steps) {
-                println(knots)
-                display(knots)
-
                 knots[0] = knots[0] + direction
                 knots.drop(1).indices.forEach { index ->
                     val head = knots[index]
@@ -49,9 +45,7 @@ fun main() = puzzle(2022, 9) {
                 }
             }
         }
-        
-        println(knots)
-        display(knots)
+
         return visited.size
     }
     

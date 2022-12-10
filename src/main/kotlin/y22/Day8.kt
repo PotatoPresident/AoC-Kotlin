@@ -29,7 +29,7 @@ fun main() = puzzle(2022, 8) {
     
     submit {
         treeHGrid.toPointMap().maxOf { (pos, height) ->
-            Dir.values().map {
+            Dir.values().toList().productOf {
                 val edge = when (it) {
                     Dir.UP -> Point(pos.x, 0)
                     Dir.DOWN -> Point(pos.x, treeHGrid.height - 1)
@@ -39,21 +39,11 @@ fun main() = puzzle(2022, 8) {
 
                 val range = pos.rangeTo(edge)
                 range.drop(1).takeUntil { treeHGrid[it] < height }.size
-            }.fold(1) { acc, i -> acc * i }
+            }
         }
     }
 }
 
 enum class Dir {
     UP, DOWN, LEFT, RIGHT
-}
-
-inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
-    val list = ArrayList<T>()
-    for (item in this) {
-        list.add(item)
-        if (!predicate(item))
-            break
-    }
-    return list
 }
