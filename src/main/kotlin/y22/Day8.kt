@@ -38,7 +38,7 @@ fun main() = puzzle(2022, 8) {
                 }
 
                 val range = pos.rangeTo(edge)
-                range.drop(1).takeUntil { treeHGrid[it] < height }.size
+                range.drop(1).takeUntil { treeHGrid[it] >= height }.size
             }
         }
     }

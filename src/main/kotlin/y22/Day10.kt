@@ -4,7 +4,7 @@
 fun main() = puzzle(2022, 10) {
     val instructions = inputLines.flatMap { if (it == "noop") listOf(0) else listOf(0, it.substringAfter(" ").toInt()) }
     
-    submit { 
+    submit {
         var x = 1
         var total = 0
         instructions.forEachIndexed { i, instruct -> 

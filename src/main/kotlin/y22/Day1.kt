@@ -8,8 +8,7 @@ import puzzle
 fun main() = puzzle(2022, 1) {
     val calories = input.trim()
         .split("\n\n")
-        .map { it.split("\n").map { it.toInt() } }
-        .map { it.sum() }
+        .map { it.split("\n").map { it.toInt() }.sum() }
 
     submit { calories.maxOf { it } }
 

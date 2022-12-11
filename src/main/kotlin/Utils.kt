@@ -50,11 +50,13 @@ fun <T> Iterable<Iterable<T>>.transpose(): List<List<T>> {
 }
 fun <T> Iterable<T>.allDistinct () = toSet().size == count()
 fun <T> Iterable<T>.productOf(f: (T) -> Int) = fold(1) { acc, t -> acc * f(t) }
+fun <T> Iterable<T>.productOfLong(f: (T) -> Long) = fold(1L) { acc, t -> acc * f(t) }
+
 inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
     val list = ArrayList<T>()
     for (item in this) {
         list.add(item)
-        if (!predicate(item))
+        if (predicate(item))
             break
     }
     return list
@@ -62,3 +64,5 @@ inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
 
 fun IntRange.contains(other: IntRange) = other.all { this.contains(it) }
 fun IntRange.overlaps(other: IntRange) = other.intersect(this).isNotEmpty()
+
+fun Any?.println() = println(this)
