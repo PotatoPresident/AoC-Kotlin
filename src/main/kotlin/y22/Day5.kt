@@ -11,7 +11,7 @@ import transpose
  */
 fun main() = puzzle(2022, 5) {
     val (stackInput, procedureInput) = inputLines.splitOnEmpty()
-    val procedure = procedureInput.drop(1).map { it.findInts() }
+    val procedure = procedureInput.map { it.findInts() }
 
     submit {
         val stacks = stackInput

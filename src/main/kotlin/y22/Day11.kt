@@ -12,7 +12,7 @@ fun main() = puzzle(2022, 11) {
     )
     
     fun getMonkeys() = buildList { 
-        inputLines.splitOnEmpty().map { it.filter { it.isNotEmpty() } }.forEach { section ->
+        inputLines.splitOnEmpty().forEach { section ->
             val items = section[1].findInts().map { it.toLong() }
 
             val operation = when (section[2][23]) {

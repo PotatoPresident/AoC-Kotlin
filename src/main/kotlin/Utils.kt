@@ -28,9 +28,19 @@ fun String.toRange() = split("-").ints().let { it[0]..it[1] }
 fun List<String>.ints() = map(String::toInt)
 fun List<String>.csv() = map { it.split(",") }
 fun Iterable<Any>.join() = joinToString("")
-inline fun <T> Iterable<T>.splitOn(predicate: (T) -> Boolean) = fold(listOf(listOf<T>())) { acc, t ->
-    if (predicate(t)) acc + listOf(listOf(t))
-    else acc.dropLast(1) + listOf(acc.last() + t)
+inline fun <T> Iterable<T>.splitOn(predicate: (T) -> Boolean): List<List<T>> {
+    val d = mutableListOf<List<T>>()
+    var u = mutableListOf<T>()
+    for (i in this) {
+        if (predicate(i)) {
+            d += u
+            u = mutableListOf()
+        } else {
+            u.add(i)
+        }
+    }
+    d += u
+    return d;
 }
 fun Iterable<String>.splitOnEmpty() = splitOn { it.isEmpty() }
 fun <T> Iterable<Iterable<T>>.transpose(): List<List<T>> {
