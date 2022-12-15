@@ -22,9 +22,9 @@ fun main() = puzzle(2022, 9) {
             for (x in minX-3..maxX+3) {
                 print(if (points.contains(Point(x, y))) if (points.first() == Point(x, y)) 'H' else 'T' else '.')
             }
-            println()
+            log()
         }
-        println()
+        log()
     }
     
     fun sim(n: Int): Int {

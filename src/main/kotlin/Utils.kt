@@ -75,4 +75,4 @@ inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
 fun IntRange.contains(other: IntRange) = other.all { this.contains(it) }
 fun IntRange.overlaps(other: IntRange) = other.intersect(this).isNotEmpty()
 
-fun Any?.println() = println(this)
+fun Any?.log() = println(this)
