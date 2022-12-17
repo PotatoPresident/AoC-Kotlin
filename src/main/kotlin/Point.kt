@@ -1,4 +1,5 @@
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.sign
 
 interface AbstractPoint {
@@ -80,9 +81,20 @@ data class Point(val x: Int, val y: Int) : Comparable<Point>, AbstractPoint {
     fun chebyshevDistance(other: Point): Int {
         return maxOf(abs(x - other.x), abs(y - other.y))
     }
+    
+    fun manhattanDistance(other: Point): Int {
+        return abs(x - other.x) + abs(y - other.y)
+    }
 
     fun unit(): Point {
         return Point(x.sign, y.sign)
+    }
+
+    fun lineTo(other: Point): List<Point> {
+        val xDelta = (other.x - x).sign
+        val yDelta = (other.y - y).sign
+        val steps = maxOf((x - other.x).absoluteValue, (y - other.y).absoluteValue)
+        return (1..steps).scan(this) { last, _ -> Point(last.x + xDelta, last.y + yDelta) }
     }
 }
 data class MutablePoint(var x: Int, var y: Int) : AbstractPoint {
