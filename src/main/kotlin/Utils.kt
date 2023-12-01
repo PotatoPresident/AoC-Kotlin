@@ -23,6 +23,8 @@ fun puzzle(year: Int, day: Int, action: Puzzle.() -> Unit) {
 }
 
 fun String.findInts() : List<Int> = Regex("""\d+""").findAll(this).map { it.value.toInt() }.toList()
+fun String.findDigits() : List<Int> = Regex("""\d""").findAll(this).map { it.value.toInt() }.toList()
+
 fun String.toRange() = split("-").ints().let { it[0]..it[1] }
 
 fun List<String>.ints() = map(String::toInt)
@@ -40,7 +42,7 @@ inline fun <T> Iterable<T>.splitOn(predicate: (T) -> Boolean): List<List<T>> {
         }
     }
     d += u
-    return d;
+    return d
 }
 fun Iterable<String>.splitOnEmpty() = splitOn { it.isEmpty() }
 fun <T> Iterable<Iterable<T>>.transpose(): List<List<T>> {
