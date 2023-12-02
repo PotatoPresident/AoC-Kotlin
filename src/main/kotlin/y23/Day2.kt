@@ -3,19 +3,22 @@ package y23
 import puzzle
 
 fun main() = puzzle(2023, 2) {
+    val games = inputLines.map { s ->
+        s.dropWhile { it != ':' }.drop(2).split(';', ',').map {
+            val (number, color) = it.trim().split(" ")
+            color to number.toInt()
+        }
+    }
+
     submit {
         var sum = 0
-        val games = inputLines.forEachIndexed { index, s ->
-            val rounds = s.dropWhile { it != ':' }.drop(2).split(';')
+        games.forEachIndexed { index, game ->
             var works = true
-            for (round in rounds) {
-                for (draw in round.split(",")) {
-                    val (number, color) = draw.trim().split(" ")
-                    when (color) {
-                        "red" -> if (number.toInt() > 12) works = false
-                        "blue" -> if (number.toInt() > 14) works = false
-                        "green"-> if (number.toInt() > 13) works = false
-                    }
+            for ((color, number) in game) {
+                when (color) {
+                    "red" -> if (number > 12) works = false
+                    "blue" -> if (number > 14) works = false
+                    "green"-> if (number > 13) works = false
                 }
             }
             if (works) sum += index + 1
@@ -25,25 +28,18 @@ fun main() = puzzle(2023, 2) {
     }
 
     submit {
-        var sum = 0
-        val games = inputLines.map { s ->
-            val rounds = s.dropWhile { it != ':' }.drop(2).split(';')
+        games.sumOf { game ->
             var red = 0
             var blue = 0
             var green = 0
-            for (round in rounds) {
-                for (draw in round.split(",")) {
-                    val (number, color) = draw.trim().split(" ")
-                    when (color) {
-                        "red" -> red = maxOf(red, number.toInt())
-                        "blue" -> blue = maxOf(blue, number.toInt())
-                        "green"-> green = maxOf(green, number.toInt())
-                    }
+            for ((color, number) in game) {
+                when (color) {
+                    "red" -> red = maxOf(red, number)
+                    "blue" -> blue = maxOf(blue, number)
+                    "green"-> green = maxOf(green, number)
                 }
             }
             red * blue * green
         }
-
-        games.sum()
     }
 }
