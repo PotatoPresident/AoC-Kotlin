@@ -1,11 +1,17 @@
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 data class Puzzle(val input: String): CharSequence by input {
     val inputLines = input.lines()
-    val results = mutableListOf<String>()
+    val results = mutableListOf<Pair<String, Long>>()
+    val times = mutableListOf<Long>()
     
     inline fun submit(action: () -> Any) {
-        results.add(action().toString())
+        val result: String
+        val time = measureTimeMillis {
+            result = action().toString()
+        }
+        results.add(result to time)
     }
 
     override fun toString(): String = input
@@ -17,8 +23,8 @@ fun puzzle(year: Int, day: Int, action: Puzzle.() -> Unit) {
         .let(::Puzzle)
         .apply(action)
         .results
-        .forEachIndexed { i, s -> 
-            println("Part ${i + 1}: $s")
+        .forEachIndexed { i, (s, time) ->
+            println("Part ${i + 1} in ${time}ms: $s")
         }
 }
 
