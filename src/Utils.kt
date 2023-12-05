@@ -18,7 +18,7 @@ data class Puzzle(val input: String): CharSequence by input {
 }
 
 fun puzzle(year: Int, day: Int, action: Puzzle.() -> Unit) {
-    File("src/main/resources/y$year", "Day${day}.txt")
+    File("src/inputs/y$year", "Day${day}.txt")
         .readText().replace("\r", "")
         .let(::Puzzle)
         .apply(action)
@@ -29,6 +29,7 @@ fun puzzle(year: Int, day: Int, action: Puzzle.() -> Unit) {
 }
 
 fun String.findInts() : List<Int> = Regex("""\d+""").findAll(this).map { it.value.toInt() }.toList()
+fun String.findLongs() : List<Long> = Regex("""\d+""").findAll(this).map { it.value.toLong() }.toList()
 fun String.findDigits() : List<Int> = Regex("""\d""").findAll(this).map { it.value.toInt() }.toList()
 
 fun String.toRange() = split("-").ints().let { it[0]..it[1] }
