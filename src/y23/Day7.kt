@@ -28,23 +28,15 @@ private open class Hand(val cards: List<Char>): Comparable<Hand> {
     open fun value(): Int {
         val grouped = cards.groupingBy { it }.eachCount()
 
-        val rank = if (grouped.containsValue(5)) {
-            7 // Five of a kind
-        } else if (grouped.containsValue(4)) {
-            6 // Four of a kind
-        } else if (grouped.containsValue(3) && grouped.containsValue(2)) {
-            5 // Full house
-        } else if (grouped.containsValue(3)) {
-            4 // Three of a kind
-        } else if (grouped.count { it.value == 2 } == 2) {
-            3 // Two pair
-        } else if (grouped.containsValue(2)) {
-            2 // One pair
-        } else {
-            1 // High card
+        return when {
+            grouped.containsValue(5) -> 7 // Five of a kind
+            grouped.containsValue(4) -> 6 // Four of a kind
+            grouped.containsValue(3) && grouped.containsValue(2) -> 5 // Full house
+            grouped.containsValue(3) -> 4 // Three of a kind
+            grouped.count { it.value == 2 } == 2 -> 3 // Two pair
+            grouped.containsValue(2) -> 2 // One pair
+            else -> 1 // High card
         }
-
-        return rank
     }
 
     override operator fun compareTo(other: Hand): Int {
@@ -66,7 +58,6 @@ private class JokerHand(cards: List<Char>): Hand(cards) {
     override fun value(): Int {
         val jokers = cards.count { it == 'J' }
         val grouped = cards.filterNot { it == 'J' }.groupingBy { it }.eachCount()
-
 
         return when {
             grouped.containsValue(5) || grouped.containsValue(5-jokers) || grouped.isEmpty() -> 7 // Five of a kind. Either only 1 type of card or only jokers. Guaranteed with 4 or more jokers
