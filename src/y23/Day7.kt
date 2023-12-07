@@ -1,6 +1,5 @@
 package y23
 
-import join
 import puzzle
 
 fun main() = puzzle(2023, 7) {
