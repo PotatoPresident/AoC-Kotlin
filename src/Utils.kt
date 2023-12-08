@@ -100,4 +100,10 @@ fun List<IntRange>.reduce(): List<IntRange> =
 
 fun IntRange.size() = this.last - this.first
 
-fun Any?.log() = println(this)
+fun Any?.log() = println(this).let { this }
+
+fun gcd(a: Long, b: Long): Long = if (a == 0L) b else gcd(b % a, a)
+fun Iterable<Long>.gcd(): Long = reduce(::gcd)
+
+fun lcm(a: Long, b: Long): Long = a / gcd(a, b) * b
+fun Iterable<Long>.lcm(): Long = reduce(::lcm)
