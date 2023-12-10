@@ -39,9 +39,17 @@ data class Point(val x: Int, val y: Int) : Comparable<Point>, AbstractPoint {
     operator fun minus(point: Point): Point {
         return Point(x - point.x, y - point.y)
     }
+
+    operator fun minus(i: Int): Point {
+        return Point(x - i, y - i)
+    }
     
     operator fun plus(point: Point): Point {
         return Point(x + point.x, y + point.y)
+    }
+
+    operator fun times(i: Int): Point {
+        return Point(x * i, y * i)
     }
 
     operator fun rangeTo(other: Point) = PointRange(this, other)

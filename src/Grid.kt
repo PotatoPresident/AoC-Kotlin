@@ -52,7 +52,7 @@ class Grid<T> private constructor(private val data: MutableList<MutableList<T>>)
         operator fun <E> invoke(data: List<List<E>> = listOf()) = Grid(data.map { it.toMutableList() }.toMutableList())
 
         inline operator fun <reified E> invoke(width: Int, height: Int, defaultValue: E) =
-            invoke(Array(width) { Array(height) { defaultValue }.toMutableList() }.toMutableList())
+            invoke(Array(height) { Array(width) { defaultValue }.toMutableList() }.toMutableList())
 
         /**
          * Get the neighboring points of a given point
