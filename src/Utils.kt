@@ -100,7 +100,8 @@ fun List<IntRange>.reduce(): List<IntRange> =
 
 fun IntRange.size() = this.last - this.first
 
-fun Any?.log() = println(this).let { this }
+fun <T> T?.logNullable() = println(this).let { this }
+fun <T> T.log() = println(this).let { this }
 
 fun gcd(a: Long, b: Long): Long = if (a == 0L) b else gcd(b % a, a)
 fun Iterable<Long>.gcd(): Long = reduce(::gcd)
