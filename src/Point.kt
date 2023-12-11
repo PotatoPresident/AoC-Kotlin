@@ -160,3 +160,7 @@ private class PointIterator(start: Point, private val end: Point, private val in
         return current
     }
 }
+
+fun Pair<Long, Long>.manhattanDistance(other: Pair<Long, Long>): Long {
+    return abs(this.first - other.first) + abs(this.second - other.second)
+}

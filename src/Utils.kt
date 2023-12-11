@@ -1,14 +1,16 @@
 import java.io.File
-import kotlin.system.measureTimeMillis
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.measureTime
+import kotlin.time.toDuration
 
-data class Puzzle(val input: String): CharSequence by input {
+data class Puzzle(val input: String) : CharSequence by input {
     val inputLines = input.lines()
-    val results = mutableListOf<Pair<String, Long>>()
-    val times = mutableListOf<Long>()
-    
+    val results = mutableListOf<Pair<String, Duration>>()
+
     inline fun submit(action: () -> Any) {
         val result: String
-        val time = measureTimeMillis {
+        val time = measureTime {
             result = action().toString()
         }
         results.add(result to time)
@@ -18,19 +20,29 @@ data class Puzzle(val input: String): CharSequence by input {
 }
 
 fun puzzle(year: Int, day: Int, action: Puzzle.() -> Unit) {
-    File("src/inputs/y$year", "Day${day}.txt")
+    val puzzle = File("src/inputs/y$year", "Day${day}.txt")
         .readText().replace("\r", "")
         .let(::Puzzle)
-        .apply(action)
-        .results
-        .forEachIndexed { i, (s, time) ->
-            println("Part ${i + 1} in ${time}ms: $s")
-        }
+
+    val totalTime = measureTime {
+        puzzle.action()
+    }
+
+    println("Puzzle: $year Day $day")
+    println("Setup Time: ${totalTime - puzzle.results.sumOf { it.second.inWholeNanoseconds }.toDuration(DurationUnit.NANOSECONDS)}")
+    puzzle.results.forEachIndexed { i, (s, time) ->
+        println("Part ${i + 1} in $time")
+    }
+    println("Total Time: $totalTime")
+    println()
+    puzzle.results.forEachIndexed { i, (s, time) ->
+        println("Part ${i + 1}: $s")
+    }
 }
 
-fun String.findInts() : List<Int> = Regex("""-?\d+""").findAll(this).map { it.value.toInt() }.toList()
-fun String.findLongs() : List<Long> = Regex("""-?\d+""").findAll(this).map { it.value.toLong() }.toList()
-fun String.findDigits() : List<Int> = Regex("""\d""").findAll(this).map { it.value.toInt() }.toList()
+fun String.findInts(): List<Int> = Regex("""-?\d+""").findAll(this).map { it.value.toInt() }.toList()
+fun String.findLongs(): List<Long> = Regex("""-?\d+""").findAll(this).map { it.value.toLong() }.toList()
+fun String.findDigits(): List<Int> = Regex("""\d""").findAll(this).map { it.value.toInt() }.toList()
 
 fun String.toRange() = split("-").ints().let { it[0]..it[1] }
 
@@ -51,6 +63,7 @@ inline fun <T> Iterable<T>.splitOn(predicate: (T) -> Boolean): List<List<T>> {
     d += u
     return d
 }
+
 fun Iterable<String>.splitOnEmpty() = splitOn { it.isEmpty() }
 fun <T> Iterable<Iterable<T>>.transpose(): List<List<T>> {
     val iter = iterator()
@@ -67,9 +80,17 @@ fun <T> Iterable<Iterable<T>>.transpose(): List<List<T>> {
 
     return ret
 }
-fun <T> Iterable<T>.allDistinct () = toSet().size == count()
+
+fun <T> Iterable<T>.allDistinct() = toSet().size == count()
 fun <T> Iterable<T>.productOf(f: (T) -> Int) = fold(1) { acc, t -> acc * f(t) }
 fun <T> Iterable<T>.productOfLong(f: (T) -> Long) = fold(1L) { acc, t -> acc * f(t) }
+fun <T> Iterable<T>.combinations(n: Int): List<List<T>> {
+    if (n == 0) return listOf(emptyList())
+    if (n == 1) return map { listOf(it) }
+    return flatMapIndexed { i, t ->
+        drop(i + 1).combinations(n - 1).map { listOf(t) + it }
+    }
+}
 
 inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
     val list = ArrayList<T>()
