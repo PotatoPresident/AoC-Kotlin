@@ -1,107 +1,35 @@
 package y23
 
+import Grid
 import puzzle
 import splitOnEmpty
-import transpose
+import toCharGrid
 
 fun main() = puzzle(2023, 13) {
-    val patterns = inputLines.splitOnEmpty()
+    val patterns = inputLines.splitOnEmpty().map { it.toCharGrid() }
 
     submit {
-        patterns.sumOf { pattern ->
-            val horizontalPairs = pattern.withIndex().windowed(2).filter { (a, b) -> a.value == b.value }
-            var result = 0
-            outer@ for ((a, b) in horizontalPairs) {
-                var offset = 1
-                while (a.index - offset >= 0 && b.index + offset < pattern.size) {
-                    if (pattern[a.index - offset] == pattern[b.index + offset]) {
-                        offset++
-                    } else {
-                        continue@outer
-                    }
-                }
-
-                result += (a.index+1) * 100
-                break@outer
-            }
-
-            val verticalPattern = pattern.map { it.toCharArray().toList() }.transpose()
-            val verticalPairs = verticalPattern.withIndex().windowed(2).filter { (a, b) -> a.value == b.value }
-            outer@ for ((a, b) in verticalPairs) {
-                var offset = 1
-                while (a.index - offset >= 0 && b.index + offset < verticalPattern.size) {
-                    if (verticalPattern[a.index - offset] == verticalPattern[b.index + offset]) {
-                        offset++
-                    } else {
-                        continue@outer
-                    }
-                }
-
-                result += a.index+1
-                break@outer
-            }
-
-            result
+        patterns.sumOf {
+            val vr = (1 until it.width).firstOrNull { x -> it.diffVertical(x) == 0 } ?: 0
+            val hr = (1 until it.height).firstOrNull { y -> it.diffHorizontal(y) == 0 } ?: 0
+            vr + hr * 100
         }
     }
 
 
     submit {
-        patterns.sumOf { pattern ->
-            val horizontalPairs = pattern.withIndex().windowed(2).filter { (a, b) -> a.value.diff(b.value) <= 1 }
-            var result = 0
-            outer@ for ((a, b) in horizontalPairs) {
-                var offset = 0
-                var diffCount = 0
-                while (a.index - offset >= 0 && b.index + offset < pattern.size) {
-                    if (diffCount > 1) {
-                        continue@outer
-                    }
-                    val diff = pattern[a.index - offset].diff(pattern[b.index + offset])
-                    if (diff == 0 || diff == 1) {
-                        offset++
-                        diffCount += diff
-                    } else {
-                        continue@outer
-                    }
-                }
-                if (diffCount == 1) {
-                    println("H ${a.value} ${a.index + 1}")
-                    result += (a.index + 1) * 100
-                    break@outer
-                }
-            }
-
-            val verticalPattern = pattern.map { it.toCharArray().toList() }.transpose().map { it.joinToString("") }
-            val verticalPairs = verticalPattern.withIndex().windowed(2).filter { (a, b) -> a.value.diff(b.value) <= 1 }
-            outer@ for ((a, b) in verticalPairs) {
-                var offset = 0
-                var diffCount = 0
-                while (a.index - offset >= 0 && b.index + offset < verticalPattern.size) {
-                    if (diffCount > 1) {
-                        continue@outer
-                    }
-                    val diff = verticalPattern[a.index - offset].diff(verticalPattern[b.index + offset])
-                    if (diff == 0 || diff == 1) {
-                        offset++
-                        diffCount += diff
-                    } else {
-                        continue@outer
-                    }
-                }
-                if (diffCount == 1) {
-                    println("V ${a.value} ${a.index + 1}")
-                    result += (a.index + 1)
-                    break@outer
-                }
-            }
-
-            if (result == 0) println("AAA BAD")
-            result
+        patterns.sumOf {
+            val vr = (1 until it.width).firstOrNull { x -> it.diffVertical(x) == 1 } ?: 0
+            val hr = (1 until it.height).firstOrNull { y -> it.diffHorizontal(y) == 1 } ?: 0
+            vr + hr * 100
         }
     }
 }
 
-private fun String.diff(other: String): Int {
-    return this.toCharArray().withIndex().count { (i, c) -> other.toCharArray()[i] != c }
+private fun Grid<Char>.diffVertical(x: Int): Int = (0 until minOf(x, width - x)).sumOf { offset ->
+    (0..<height).count { y -> this[x - offset - 1, y] != this[x + offset, y] }
+}
+
+private fun Grid<Char>.diffHorizontal(y: Int): Int = (0 until minOf(y, height - y)).sumOf { offset ->
+    (0..<width).count { x -> this[x, y - offset - 1] != this[x, y + offset] }
 }

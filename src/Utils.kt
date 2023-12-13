@@ -48,6 +48,8 @@ fun String.toRange() = split("-").ints().let { it[0]..it[1] }
 
 fun List<String>.ints() = map(String::toInt)
 fun List<String>.csv() = map { it.split(",") }
+fun List<String>.mapToChars() = map { it.toCharArray().toList() }
+fun List<String>.toCharGrid() = mapToChars().toGrid()
 fun Iterable<Any>.join() = joinToString("")
 inline fun <T> Iterable<T>.splitOn(predicate: (T) -> Boolean): List<List<T>> {
     val d = mutableListOf<List<T>>()
