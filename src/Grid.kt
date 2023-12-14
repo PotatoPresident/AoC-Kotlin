@@ -1,4 +1,4 @@
-class Grid<T> private constructor(private val data: MutableList<MutableList<T>>) : Iterable<Iterable<T>> {
+data class Grid<T> private constructor(private val data: MutableList<MutableList<T>>) : Iterable<Iterable<T>> {
     val height: Int
         get() = data.size
     val width: Int
@@ -15,6 +15,7 @@ class Grid<T> private constructor(private val data: MutableList<MutableList<T>>)
     operator fun set(point: Point, value: T) {
         data[point.y][point.x] = value
     }
+    operator fun contains(point: Point) = point.x in 0 until width && point.y in 0 until height
 
     fun getNeighbors(point: Point, includeDiagonals: Boolean = true, searchDistance: Int = 1): Map<Point, T> {
         val points = getNeighboringPoints(point, includeDiagonals, searchDistance)
