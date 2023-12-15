@@ -1,4 +1,5 @@
 import java.io.File
+import kotlin.experimental.ExperimentalTypeInference
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.measureTime
@@ -102,6 +103,22 @@ inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
             break
     }
     return list
+}
+
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+inline fun <T> Iterable<T>.sumOfIndexed(selector: (i: Int, T) -> Int): Int {
+    var sum = 0
+    for ((i, el) in this.withIndex()) sum += selector(i, el)
+    return sum
+}
+
+@OptIn(ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+inline fun <T> Iterable<T>.sumOfIndexed(selector: (i: Int, T) -> Long): Long {
+    var sum = 0L
+    for ((i, el) in this.withIndex()) sum += selector(i, el)
+    return sum
 }
 
 fun IntRange.contains(other: IntRange) = other.all { this.contains(it) }
