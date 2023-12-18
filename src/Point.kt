@@ -5,20 +5,6 @@ import kotlin.math.sign
 interface AbstractPoint {
     fun x(): Int
     fun y(): Int
-
-    enum class Direction(val dx: Int, val dy: Int) {
-        LTR(1, 0),
-        RTL(-1, 0),
-        TTB(0, 1),
-        BTT(0, -1),
-        BL_TR(1, 1),
-        TR_BL(-1, -1),
-        TL_BR(1, -1),
-        BR_TL(-1, 1);
-
-        fun next(point: AbstractPoint) = Point(point.x() + dx, point.y() + dy)
-        fun next(n: Int, point: AbstractPoint) = Point(point.x() + dx * n, point.y() + dy * n)
-    }
 }
 
 data class Point(val x: Int, val y: Int) : Comparable<Point>, AbstractPoint {
@@ -43,7 +29,7 @@ data class Point(val x: Int, val y: Int) : Comparable<Point>, AbstractPoint {
     operator fun minus(i: Int): Point {
         return Point(x - i, y - i)
     }
-    
+
     operator fun plus(point: Point): Point {
         return Point(x + point.x, y + point.y)
     }
@@ -51,6 +37,8 @@ data class Point(val x: Int, val y: Int) : Comparable<Point>, AbstractPoint {
     operator fun times(i: Int): Point {
         return Point(x * i, y * i)
     }
+
+    operator fun unaryMinus() = Point(-x, -y)
 
     operator fun rangeTo(other: Point) = PointRange(this, other)
     operator fun rangeUntil(other: Point) = ExclusivePointRange(this, other)
@@ -85,11 +73,11 @@ data class Point(val x: Int, val y: Int) : Comparable<Point>, AbstractPoint {
                 }
             }
         }
-    
+
     fun chebyshevDistance(other: Point): Int {
         return maxOf(abs(x - other.x), abs(y - other.y))
     }
-    
+
     fun manhattanDistance(other: Point): Int {
         return abs(x - other.x) + abs(y - other.y)
     }
@@ -138,15 +126,15 @@ data class ExclusivePointRange(
 
 private class PointIterator(start: Point, private val end: Point, private val includeEnd: Boolean) : Iterator<Point> {
     val direction = when {
-        start.x == end.x && start.y == end.y -> AbstractPoint.Direction.LTR
-        start.x <  end.x && start.y == end.y -> AbstractPoint.Direction.LTR
-        start.x >  end.x && start.y == end.y -> AbstractPoint.Direction.RTL
-        start.x == end.x && start.y <  end.y -> AbstractPoint.Direction.TTB
-        start.x == end.x                     -> AbstractPoint.Direction.BTT
-        start.x <  end.x && start.y <  end.y -> AbstractPoint.Direction.BL_TR
-        start.x <  end.x                     -> AbstractPoint.Direction.TL_BR
-        start.y <  end.y                     -> AbstractPoint.Direction.TR_BL
-        else                                 -> AbstractPoint.Direction.BR_TL
+        start.x == end.x && start.y == end.y -> Direction.LTR
+        start.x <  end.x && start.y == end.y -> Direction.LTR
+        start.x >  end.x && start.y == end.y -> Direction.RTL
+        start.x == end.x && start.y <  end.y -> Direction.TTB
+        start.x == end.x                     -> Direction.BTT
+        start.x <  end.x && start.y <  end.y -> Direction.BL_TR
+        start.x <  end.x                     -> Direction.TL_BR
+        start.y <  end.y                     -> Direction.TR_BL
+        else                                 -> Direction.BR_TL
     }
 
     private var working = Point(start.x, start.y)
@@ -164,3 +152,34 @@ private class PointIterator(start: Point, private val end: Point, private val in
 fun Pair<Long, Long>.manhattanDistance(other: Pair<Long, Long>): Long {
     return abs(this.first - other.first) + abs(this.second - other.second)
 }
+
+enum class Direction(val dx: Int, val dy: Int) {
+    LTR(1, 0),
+    RTL(-1, 0),
+    TTB(0, 1),
+    BTT(0, -1),
+    BL_TR(1, 1),
+    TR_BL(-1, -1),
+    TL_BR(1, -1),
+    BR_TL(-1, 1);
+
+    fun next(point: AbstractPoint) = Point(point.x() + dx, point.y() + dy)
+    fun next(n: Int, point: AbstractPoint) = Point(point.x() + dx * n, point.y() + dy * n)
+
+    companion object {
+        val UP = BTT
+        val RIGHT = LTR
+        val DOWN = TTB
+        val LEFT = RTL
+    }
+
+    val dir4: List<Direction>
+        get() = listOf(UP, RIGHT, DOWN, LEFT)
+}
+
+fun Direction.toPoint() = Point(dx, dy)
+operator fun Direction.times(n: Int) = Point(dx * n, dy * n)
+operator fun Direction.unaryMinus() = (-toPoint()).asDirection()
+
+fun Point.asDirection() = enumValues<Direction>().first { it.dx == x && it.dy == y }
+

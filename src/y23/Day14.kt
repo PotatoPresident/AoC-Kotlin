@@ -1,6 +1,6 @@
 package y23
 
-import AbstractPoint
+import Direction
 import Grid
 import puzzle
 import toCharGrid
@@ -10,7 +10,7 @@ fun main() = puzzle(2023, 14) {
     val grid = inputLines.toCharGrid()
 
     submit {
-        grid.toGrid().roll(AbstractPoint.Direction.BTT).toPointMap().filter { it.value == 'O' }.map { grid.height - it.key.y }.sum()
+        grid.toGrid().roll(Direction.BTT).toPointMap().filter { it.value == 'O' }.map { grid.height - it.key.y }.sum()
     }
 
     submit {
@@ -18,7 +18,7 @@ fun main() = puzzle(2023, 14) {
     }
 }
 
-private fun Grid<Char>.roll(direction: AbstractPoint.Direction): Grid<Char> {
+private fun Grid<Char>.roll(direction: Direction): Grid<Char> {
     var moved: Boolean
     val grid = this.toGrid()
     do {
@@ -41,7 +41,7 @@ private fun Grid<Char>.rollAllDir(count: Long): Grid<Char> {
     var i = 0L
     var cur = this
     while (target > 0) {
-        val new = cur.roll(AbstractPoint.Direction.BTT).roll(AbstractPoint.Direction.RTL).roll(AbstractPoint.Direction.TTB).roll(AbstractPoint.Direction.LTR)
+        val new = cur.roll(Direction.BTT).roll(Direction.RTL).roll(Direction.TTB).roll(Direction.LTR)
         if (new in seen && i != seen[new]) {
             println("Found loop at $i")
             val loopLength = i - seen[new]!!

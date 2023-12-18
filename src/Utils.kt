@@ -1,4 +1,6 @@
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.experimental.ExperimentalTypeInference
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -148,3 +150,37 @@ fun Iterable<Long>.gcd(): Long = reduce(::gcd)
 
 fun lcm(a: Long, b: Long): Long = a / gcd(a, b) * b
 fun Iterable<Long>.lcm(): Long = reduce(::lcm)
+
+inline fun <T> Queue<T>.drain(use: (T) -> Unit) {
+    while (isNotEmpty()) use(remove()!!)
+}
+
+inline fun <T> dijkstra(
+    initial: T, // assuming start is cost zero
+    isEnd: (T) -> Boolean,
+    neighbors: (T) -> Iterable<T>,
+    crossinline findCost: (T) -> Int
+): DijkstraPath<T>? {
+    val visited = hashSetOf(initial)
+    val prev = hashMapOf<T, T>()
+    val queue = PriorityQueue<Pair<T, Int>>(compareBy { (_, c) -> c }).also { it.add(initial to 0) }
+
+    queue.drain { (current, currentCost) ->
+        if (isEnd(current)) return DijkstraPath(
+            end = current,
+            path = generateSequence(current) { prev[it] }.toList().asReversed(),
+            cost = currentCost
+        )
+
+        neighbors(current).forEach { new ->
+            if (visited.add(new)) {
+                prev[new] = current
+                queue.offer(new to currentCost + findCost(new))
+            }
+        }
+    }
+
+    return null
+}
+
+data class DijkstraPath<T>(val end: T, val path: List<T>, val cost: Int)

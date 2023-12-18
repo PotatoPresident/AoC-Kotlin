@@ -1,6 +1,6 @@
 package y23
 
-import AbstractPoint
+import Direction
 import Grid
 import Point
 import puzzle
@@ -14,7 +14,7 @@ fun main() = puzzle(2023, 10) {
     submit {
         loop.add(start)
 
-        var prev = AbstractPoint.Direction.TTB
+        var prev = Direction.TTB
         var cur: Point = start.plus(Point(0, 1))
 
         while (cur != start) {
@@ -169,19 +169,19 @@ private fun Grid<Char>.scale(loop: Set<Point>): Grid<Char> {
     return newGrid
 }
 
-private fun Char.direction(from: AbstractPoint.Direction): AbstractPoint.Direction = when {
-    this == '━' && from == AbstractPoint.Direction.LTR -> AbstractPoint.Direction.LTR
-    this == '━' && from == AbstractPoint.Direction.RTL -> AbstractPoint.Direction.RTL
-    this == '┃' && from == AbstractPoint.Direction.TTB -> AbstractPoint.Direction.TTB
-    this == '┃' && from == AbstractPoint.Direction.BTT -> AbstractPoint.Direction.BTT
-    this == '┗' && from == AbstractPoint.Direction.TTB -> AbstractPoint.Direction.LTR
-    this == '┗' && from == AbstractPoint.Direction.RTL -> AbstractPoint.Direction.BTT
-    this == '┛' && from == AbstractPoint.Direction.TTB -> AbstractPoint.Direction.RTL
-    this == '┛' && from == AbstractPoint.Direction.LTR -> AbstractPoint.Direction.BTT
-    this == '┓' && from == AbstractPoint.Direction.LTR -> AbstractPoint.Direction.TTB
-    this == '┓' && from == AbstractPoint.Direction.BTT -> AbstractPoint.Direction.RTL
-    this == '┏' && from == AbstractPoint.Direction.BTT -> AbstractPoint.Direction.LTR
-    this == '┏' && from == AbstractPoint.Direction.RTL -> AbstractPoint.Direction.TTB
+private fun Char.direction(from: Direction): Direction = when {
+    this == '━' && from == Direction.LTR -> Direction.LTR
+    this == '━' && from == Direction.RTL -> Direction.RTL
+    this == '┃' && from == Direction.TTB -> Direction.TTB
+    this == '┃' && from == Direction.BTT -> Direction.BTT
+    this == '┗' && from == Direction.TTB -> Direction.LTR
+    this == '┗' && from == Direction.RTL -> Direction.BTT
+    this == '┛' && from == Direction.TTB -> Direction.RTL
+    this == '┛' && from == Direction.LTR -> Direction.BTT
+    this == '┓' && from == Direction.LTR -> Direction.TTB
+    this == '┓' && from == Direction.BTT -> Direction.RTL
+    this == '┏' && from == Direction.BTT -> Direction.LTR
+    this == '┏' && from == Direction.RTL -> Direction.TTB
 
     else -> error("Invalid direction: $this")
 }
