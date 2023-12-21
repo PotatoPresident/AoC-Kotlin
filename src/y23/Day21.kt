@@ -49,9 +49,16 @@ fun main() = puzzle(2023, 21) {
     }
 
     submit {
-        val (a, b, c) = List(3) { 65 + it * 131 to countInfiniteSteps(start, 65 + it * 131).size }
+        val (a, b, c) = List(3) { 65 + it * 131.0 to countInfiniteSteps(start, 65 + it * 131).size.toDouble() }
 
-        "$a $b $c"
-        // Then I used desmos lol
+        lagrangeInterpolation(listOf(a, b, c))(26501365.0).toLong()
+    }
+}
+
+fun lagrangeInterpolation(points: List<Pair<Double, Double>>): (Double) -> Double {
+    return { x ->
+        points.sumOf { (xi, yi) ->
+            yi * points.filter { it != xi to yi }.fold(1.0) { acc, (xj, _) -> acc * (x - xj) / (xi - xj) }
+        }
     }
 }
