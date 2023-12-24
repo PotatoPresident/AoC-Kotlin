@@ -1,17 +1,17 @@
 package y23
 
-import com.microsoft.z3.Context
 import findLongs
 import puzzle
+import z3Context
 
 fun main() = puzzle(2023, 24) {
-    val hailstones = inputLines.map { it.split('@') }.map { (p, v) ->
-        val (x, y, z) = p.findLongs().map { it.toDouble() }
-        val (dx, dy, dz) = v.findLongs().map { it.toDouble() }
-        Hailstone(Vec3(x, y, z), Vec3(dx, dy, dz))
-    }
-
     submit {
+        val hailstones = inputLines.map { it.split('@') }.map { (p, v) ->
+            val (x, y, z) = p.findLongs().map { it.toDouble() }
+            val (dx, dy, dz) = v.findLongs().map { it.toDouble() }
+            Hailstone(Vec3(x, y, z), Vec3(dx, dy, dz))
+        }
+
         val intersections = mutableListOf<Vec3>()
         val range = 200000000000000.0..400000000000000.0
         for (i in hailstones.indices) {
@@ -27,7 +27,7 @@ fun main() = puzzle(2023, 24) {
     }
 
     submit {
-        Context().run {
+        z3Context {
             val s = mkSolver()
 
             val x = mkRealConst("x")
@@ -37,18 +37,19 @@ fun main() = puzzle(2023, 24) {
             val vy = mkRealConst("vy")
             val vz = mkRealConst("vz")
 
-            for (i in hailstones.indices) {
-                val (xI, yI, zI) = hailstones[i].pos
-                val (vxI, vyI, vzI) = hailstones[i].vec
+            for ((i, line) in inputLines.withIndex()) {
+                val (pos, vel) = line.split('@')
+                val (xI, yI, zI) = pos.findLongs().map { mkReal(it) }
+                val (vxI, vyI, vzI) = vel.findLongs().map { mkReal(it) }
                 val t = mkRealConst("t$i")
-                s.add(mkEq(mkAdd(mkReal(xI.toLong()), mkMul(mkReal(vxI.toLong()), t)), mkAdd(x, mkMul(vx, t))))
-                s.add(mkEq(mkAdd(mkReal(yI.toLong()), mkMul(mkReal(vyI.toLong()), t)), mkAdd(y, mkMul(vy, t))))
-                s.add(mkEq(mkAdd(mkReal(zI.toLong()), mkMul(mkReal(vzI.toLong()), t)), mkAdd(z, mkMul(vz, t))))
+                s += xI + vxI * t eq x + vx * t
+                s += yI + vyI * t eq y + vy * t
+                s += zI + vzI * t eq z + vz * t
             }
 
             s.check()
             val m = s.model
-            m.getConstInterp(x).toString().toLong() + m.getConstInterp(y).toString().toLong() + m.getConstInterp(z).toString().toLong()
+            m.getConstInterp(x).asLong() + m.getConstInterp(y).asLong() + m.getConstInterp(z).asLong()
         }
     }
 }
