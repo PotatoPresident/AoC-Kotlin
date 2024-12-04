@@ -16,6 +16,6 @@ fun main() = puzzle(2024, 2) {
     }
 
     submit {
-        levels.count { it.isSafe() || it.indices.any { removed -> it.filterIndexed { index, _ -> index != removed }.isSafe() } }
+        levels.count { it.isSafe() || it.indices.any { removed -> it.filterIndexed { i, _ -> i != removed }.isSafe() } }
     }
 }
