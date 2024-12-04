@@ -9,6 +9,7 @@ data class Grid<T> private constructor(private val data: MutableList<MutableList
 
     operator fun get(x: Int, y: Int) = data[y][x]
     operator fun get(point: Point) = data[point.y][point.x]
+    fun getOrNull(point: Point) = data.getOrNull(point.y)?.getOrNull(point.x)
     operator fun set(x: Int, y: Int, value: T) {
         data[y][x] = value
     }

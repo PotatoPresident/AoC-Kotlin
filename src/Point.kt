@@ -34,6 +34,10 @@ data class Point(val x: Int, val y: Int) : Comparable<Point>, AbstractPoint {
         return Point(x + point.x, y + point.y)
     }
 
+    operator fun plus(dir: Direction): Point {
+        return Point(x + dir.dx, y + dir.dy)
+    }
+
     operator fun times(i: Int): Point {
         return Point(x * i, y * i)
     }
