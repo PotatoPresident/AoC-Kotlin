@@ -175,10 +175,10 @@ enum class Direction(val dx: Int, val dy: Int) {
         val RIGHT = LTR
         val DOWN = TTB
         val LEFT = RTL
-    }
 
-    val dir4: List<Direction>
-        get() = listOf(UP, RIGHT, DOWN, LEFT)
+        val dir4: List<Direction>
+            get() = listOf(UP, RIGHT, DOWN, LEFT)
+    }
 }
 
 fun Direction.toPoint() = Point(dx, dy)

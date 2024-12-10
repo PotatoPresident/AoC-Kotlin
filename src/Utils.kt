@@ -101,9 +101,9 @@ fun <T> Iterable<T>.combinations(n: Int): List<List<T>> {
 inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
     val list = ArrayList<T>()
     for (item in this) {
-        list.add(item)
         if (predicate(item))
             break
+        list.add(item)
     }
     return list
 }
