@@ -30,6 +30,10 @@ data class Point(val x: Int, val y: Int) : Comparable<Point>, AbstractPoint {
         return Point(x - i, y - i)
     }
 
+    operator fun minus(dir: Direction): Point {
+        return Point(x - dir.dx, y - dir.dy)
+    }
+
     operator fun plus(point: Point): Point {
         return Point(x + point.x, y + point.y)
     }
@@ -153,6 +157,9 @@ private class PointIterator(start: Point, private val end: Point, private val in
     }
 }
 
+fun Point.rotateRight() = Point(y, -x)
+fun Point.rotateLeft() = Point(-y, x)
+
 fun Pair<Long, Long>.manhattanDistance(other: Pair<Long, Long>): Long {
     return abs(this.first - other.first) + abs(this.second - other.second)
 }
@@ -184,6 +191,20 @@ enum class Direction(val dx: Int, val dy: Int) {
 fun Direction.toPoint() = Point(dx, dy)
 operator fun Direction.times(n: Int) = Point(dx * n, dy * n)
 operator fun Direction.unaryMinus() = (-toPoint()).asDirection()
+fun Direction.rotateRight() = when (this) {
+    Direction.UP -> Direction.RIGHT
+    Direction.RIGHT -> Direction.DOWN
+    Direction.DOWN -> Direction.LEFT
+    Direction.LEFT -> Direction.UP
+    else -> throw IllegalArgumentException("Cannot rotate $this")
+}
+fun Direction.rotateLeft() = when (this) {
+    Direction.UP -> Direction.LEFT
+    Direction.LEFT -> Direction.DOWN
+    Direction.DOWN -> Direction.RIGHT
+    Direction.RIGHT -> Direction.UP
+    else -> throw IllegalArgumentException("Cannot rotate $this")
+}
 
 fun Point.asDirection() = enumValues<Direction>().first { it.dx == x && it.dy == y }
 

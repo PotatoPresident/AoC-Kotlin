@@ -81,4 +81,18 @@ data class Grid<T> private constructor(private val data: MutableList<MutableList
     override fun iterator(): Iterator<Iterable<T>> = data.iterator()
 }
 
+fun floodFill(start: Point, next: (Point) -> Iterable<Point>): Set<Point> {
+    val stack = mutableListOf(start)
+    val visited = mutableSetOf<Point>()
+
+    while (stack.isNotEmpty()) {
+        val current = stack.removeLast()
+        if (current in visited) continue
+        visited += current
+        stack += next(current)
+    }
+
+    return visited
+}
+
 fun <T> Iterable<Iterable<T>>.toGrid() = Grid(this.toList().map { it.toList() })

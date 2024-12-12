@@ -124,6 +124,29 @@ inline fun <T> Iterable<T>.sumOfIndexed(selector: (i: Int, T) -> Long): Long {
     return sum
 }
 
+/**
+ * Count the number of occurrences of each element in the iterable, and return the result as a map.
+ */
+fun <T> Iterable<T>.counts(): Map<T, Int> = groupingBy { it }.eachCount()
+
+class DefaultMap<K, V> internal constructor(
+    private val map: MutableMap<K, V>,
+    private val defaultValue: V = USE_FUNCTION as V,
+    private val defaultFunction: (K) -> V = { defaultValue },
+) : MutableMap<K, V> by map {
+    override operator fun get(key: K): V = map[key] ?: if (defaultValue != USE_FUNCTION) defaultValue else defaultFunction(key)
+    override fun getOrDefault(key: K, defaultValue: V) = map.getOrDefault(key, defaultValue)
+
+    companion object {
+        private val USE_FUNCTION = Any()
+    }
+}
+
+fun <K, V> Map<K, V>.default(default: V): DefaultMap<K, V> = DefaultMap(toMutableMap(), defaultValue = default)
+fun <K, V> Map<K, V>.default(default: (K) -> V): DefaultMap<K, V> = DefaultMap(toMutableMap(), defaultFunction = default)
+fun <K, V> Map<K, V>.default(default: () -> V): DefaultMap<K, V> = DefaultMap(toMutableMap()) { default() }
+fun <K, V> defaultMap(default: V, vararg pairs: Pair<K, V>) = mutableMapOf(*pairs).default(default)
+
 fun IntRange.contains(other: IntRange) = other.all { this.contains(it) }
 fun IntRange.overlaps(other: IntRange) = other.intersect(this).isNotEmpty()
 
