@@ -216,8 +216,11 @@ class Z3Context(): Context() {
     operator fun <T: ArithSort> ArithExpr<T>.div(other: ArithExpr<T>) = super.mkDiv(this, other)
     infix fun <T: ArithSort> ArithExpr<T>.eq(other: ArithExpr<T>) = super.mkEq(this, other)
     operator fun Solver.plusAssign(expr: Expr<BoolSort>) = add(expr)
-    fun RatNum.toLong() = if (denominator.int64 == 1L) numerator.int64 else throw IllegalArgumentException("Rational number is not an integer: $this")
-    fun Expr<*>.asLong() = (this as RatNum).toLong()
+    fun Expr<*>.asLong() = when (this) {
+        is IntNum -> int64
+        is RatNum -> if (denominator.int64 == 1L) numerator.int64 else throw IllegalArgumentException("Rational number is not an integer: $this")
+        else -> throw IllegalArgumentException("Cannot convert $this to a long")
+    }
 }
 
 fun z3Context(action: Z3Context.() -> Any): Any {
