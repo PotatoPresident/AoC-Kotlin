@@ -116,6 +116,12 @@ data class MutablePoint(var x: Int, var y: Int) : AbstractPoint {
     override fun toString(): String {
         return "($x, $y)"
     }
+
+    operator fun plus(point: AbstractPoint): MutablePoint {
+        this.x += point.x()
+        this.y += point.y()
+        return this
+    }
 }
 
 data class PointRange(
