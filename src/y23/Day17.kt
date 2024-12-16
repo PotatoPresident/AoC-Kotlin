@@ -38,9 +38,9 @@ fun main() = puzzle(2023, 17) {
                         pos = s.pos + it.toPoint(),
                         sameDir = if (it == s.lastDir) s.sameDir + 1 else 1,
                         lastDir = it
-                    )
+                    ) to grid[s.pos + it.toPoint()]
                 }
-        }, { s -> grid[s.pos] }
+        }
         )!!.cost
     }
 
@@ -58,9 +58,9 @@ fun main() = puzzle(2023, 17) {
                         pos = s.pos + it.toPoint(),
                         sameDir = if (it == s.lastDir) s.sameDir + 1 else 1,
                         lastDir = it
-                    )
+                    ) to grid[s.pos + it.toPoint()]
                 }
-        }, { s -> grid[s.pos] }
+        }
         )!!.cost
     }
 }

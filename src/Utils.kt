@@ -180,31 +180,108 @@ inline fun <T> Queue<T>.drain(use: (T) -> Unit) {
 }
 
 inline fun <T> dijkstra(
-    initial: T, // assuming start is cost zero
+    initial: T,
     isEnd: (T) -> Boolean,
-    neighbors: (T) -> Iterable<T>,
-    crossinline findCost: (T) -> Int
+    neighbors: (T) -> Iterable<Pair<T, Int>>
 ): DijkstraPath<T>? {
-    val visited = hashSetOf(initial)
+    val dist = hashMapOf<T, Int>()
     val prev = hashMapOf<T, T>()
-    val queue = PriorityQueue<Pair<T, Int>>(compareBy { (_, c) -> c }).also { it.add(initial to 0) }
+    val queue = PriorityQueue<Pair<T, Int>>(compareBy { (_, c) -> c })
 
-    queue.drain { (current, currentCost) ->
-        if (isEnd(current)) return DijkstraPath(
-            end = current,
-            path = generateSequence(current) { prev[it] }.toList().asReversed(),
-            cost = currentCost
-        )
+    dist[initial] = 0
+    queue.offer(initial to 0)
 
-        neighbors(current).forEach { new ->
-            if (visited.add(new)) {
+    while (queue.isNotEmpty()) {
+        val (current, currentCost) = queue.poll()
+        if (currentCost > dist[current]!!) continue
+
+        if (isEnd(current)) {
+            val path = generateSequence(current) { prev[it] }.toList().asReversed()
+            return DijkstraPath(end = current, path = path, cost = currentCost)
+        }
+
+        for ((new, edgeCost) in neighbors(current)) {
+            val newCost = currentCost + edgeCost
+            val oldCost = dist.getOrDefault(new, Int.MAX_VALUE)
+            if (newCost < oldCost) {
+                dist[new] = newCost
                 prev[new] = current
-                queue.offer(new to currentCost + findCost(new))
+                queue.offer(new to newCost)
             }
         }
     }
 
     return null
+}
+
+fun <T> dijkstraAllPaths(
+    initial: T,
+    isEnd: (T) -> Boolean,
+    neighbors: (T) -> Iterable<Pair<T, Int>>
+): List<DijkstraPath<T>> {
+    val dist = mutableMapOf<T, Int>()
+    val prev = mutableMapOf<T, MutableList<T>>()
+
+    dist[initial] = 0
+    val queue = PriorityQueue<Pair<T, Int>>(compareBy { it.second })
+    queue.offer(initial to 0)
+
+    val endNodes = mutableListOf<T>()
+    var minEndCost = Int.MAX_VALUE
+
+    while (queue.isNotEmpty()) {
+        val (current, currentCost) = queue.poll()
+
+        if (currentCost > dist[current]!!) continue
+
+        if (isEnd(current)) {
+            if (currentCost < minEndCost) {
+                minEndCost = currentCost
+                endNodes.clear()
+                endNodes.add(current)
+            } else if (currentCost == minEndCost) {
+                endNodes.add(current)
+            }
+        }
+
+        for ((next, edgeCost) in neighbors(current)) {
+            val newCost = currentCost + edgeCost
+            val oldCost = dist.getOrDefault(next, Int.MAX_VALUE)
+
+            if (newCost < oldCost) {
+                dist[next] = newCost
+                prev[next] = mutableListOf(current)
+                queue.offer(next to newCost)
+            } else if (newCost == oldCost) {
+                prev.getOrPut(next) { mutableListOf() }.add(current)
+            }
+        }
+    }
+
+    if (minEndCost == Int.MAX_VALUE) {
+        return listOf()
+    }
+
+    val allPaths = mutableListOf<DijkstraPath<T>>()
+
+    fun backtrack(node: T, path: MutableList<T>) {
+        if (node == initial) {
+            allPaths.add(DijkstraPath(node, path.reversed(), minEndCost))
+            return
+        }
+        val predecessors = prev[node] ?: return
+        for (p in predecessors) {
+            path.add(p)
+            backtrack(p, path)
+            path.removeAt(path.size - 1)
+        }
+    }
+
+    for (endNode in endNodes) {
+        backtrack(endNode, mutableListOf(endNode))
+    }
+
+    return allPaths
 }
 
 data class DijkstraPath<T>(val end: T, val path: List<T>, val cost: Int)
