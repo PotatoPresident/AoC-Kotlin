@@ -32,3 +32,5 @@ bin/
 .DS_Store
 
 src/inputs/
+
+*.dll
