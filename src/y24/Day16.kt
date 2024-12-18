@@ -7,7 +7,6 @@ import dijkstraAllPaths
 import puzzle
 import rotateLeft
 import rotateRight
-import sschr15.aoc.annotations.Memoize
 import toCharGrid
 import toPoint
 
@@ -62,18 +61,5 @@ fun main() = puzzle(2024, 16) {
                 choices
             }
         ).flatMap { it.path.map { it.pos } }.distinct().size
-    }
-
-    submit {
-        @Memoize
-        fun fib(n: Long): Long {
-            return when (n) {
-                0L -> 0
-                1L -> 1
-                else -> fib(n - 1) + fib(n - 2)
-            }
-        }
-
-        fib(50)
     }
 }

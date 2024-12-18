@@ -16,8 +16,8 @@ dependencies {
     // From https://github.com/sschr15/advent-of-code/tree/2024/z3
     implementation(files("z3/kotlin-z3-wrapper.jar"))
 
-    implementation("com.sschr15.aoc:runtime-components:0.1.0")
-    compilerPlugin("com.sschr15.aoc:compiler-plugin:0.1.0")
+    implementation("com.sschr15.aoc:runtime-components:0.3.0")
+    compilerPlugin("com.sschr15.aoc:compiler-plugin:0.3.0")
 }
 
 kotlin {
