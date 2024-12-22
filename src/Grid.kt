@@ -24,6 +24,22 @@ data class Grid<T> private constructor(private val data: MutableList<MutableList
         return points.associateWith { this[it] }
     }
 
+    fun getTaxicabNeighbors(point: Point, searchDistance: Int): Map<Point, T> {
+        val points = (-searchDistance..searchDistance).flatMap { dx ->
+            (-searchDistance..searchDistance).map { dy ->
+                Point(point.x + dx, point.y + dy)
+            }
+        }
+            .filter { p ->
+                // Ensure we don't include the original point and only include points within Manhattan distance
+                (p != point) &&
+                        (p.x in 0 until width && p.y in 0 until height) &&
+                        (kotlin.math.abs(p.x - point.x) + kotlin.math.abs(p.y - point.y) <= searchDistance)
+            }
+
+        return points.associateWith { this[it] }
+    }
+
     /**
      * Returns a map where the keys are points and the values are the grid's values at their points.
      * ---
