@@ -97,6 +97,18 @@ fun <T> Iterable<T>.combinations(n: Int): List<List<T>> {
         drop(i + 1).combinations(n - 1).map { listOf(t) + it }
     }
 }
+fun <T> Iterable<T>.permutations(): List<List<T>> {
+    val list = this.toList()
+    if (list.size <= 1) return listOf(list)
+    val result = mutableListOf<List<T>>()
+    for (i in list.indices) {
+        val rest = list - list[i]
+        for (perm in rest.permutations()) {
+            result.add(listOf(list[i]) + perm)
+        }
+    }
+    return result
+}
 
 inline fun <T> Iterable<T>.takeUntil(predicate: (T) -> Boolean): List<T> {
     val list = ArrayList<T>()
