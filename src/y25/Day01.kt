@@ -1,62 +1,30 @@
 package y25
 
 import puzzle
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 /**
  * [AOC 2025 Day 1](https://adventofcode.com/2025/day/1)
  */
 fun main() = puzzle(2025, 1) {
-    val turns = inputLines.map { it[0] to it.drop(1).toInt()}
+    val turns = inputLines.map { line ->
+        val dist = line.drop(1).toInt()
+        if (line.first() == 'L') -dist else dist
+    }
+    val start = 50
+    val loopSize = 100
 
     submit {
-        var cur = 50
-        var res = 0
-        for ((dir, count) in turns) {
-            for (i in 0 until count) {
-                if (dir == 'L') {
-                    cur -= 1
-                } else {
-                    cur += 1
-                }
-
-                if (cur == -1) {
-                    cur = 99
-                } else if (cur == 100) {
-                    cur = 0
-                }
-            }
-
-            if (cur == 0){
-                res += 1
-            }
-        }
-
-        res
+        turns.runningFold(start) { cur, dir ->
+            (cur + dir).mod(loopSize)
+        }.drop(1).count { it == 0 }
     }
 
     submit {
-        var cur = 50
-        var res = 0
-        for ((dir, count) in turns) {
-            for (i in 0 until count) {
-                if (dir == 'L') {
-                    cur -= 1
-                } else {
-                    cur += 1
-                }
-
-                if (cur == -1) {
-                    cur = 99
-                } else if (cur == 100) {
-                    cur = 0
-                }
-
-                if (cur == 0){
-                    res += 1
-                }
-            }
-        }
-
-        res
+        turns.flatMap { turn -> List(turn.absoluteValue) { turn.sign } }
+            .runningFold(start) { cur, dir ->
+                (cur + dir).mod(loopSize)
+            }.drop(1).count { it == 0 }
     }
 }
