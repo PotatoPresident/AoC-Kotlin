@@ -49,8 +49,10 @@ fun String.findLongs(): List<Long> = Regex("""-?\d+""").findAll(this).map { it.v
 fun String.findDigits(): List<Int> = Regex("""\d""").findAll(this).map { it.value.toInt() }.toList()
 
 fun String.toRange() = split("-").ints().let { it[0]..it[1] }
+fun String.toLongRange() = split("-").longs().let { it[0]..it[1] }
 
 fun List<String>.ints() = map(String::toInt)
+fun List<String>.longs() = map(String::toLong)
 fun List<String>.csv() = map { it.split(",") }
 fun List<String>.mapToChars() = map { it.toCharArray().toList() }
 fun List<String>.toCharGrid() = mapToChars().toGrid()
