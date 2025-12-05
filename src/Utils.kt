@@ -164,6 +164,8 @@ fun <K, V> defaultMap(default: V, vararg pairs: Pair<K, V>) = mutableMapOf(*pair
 fun IntRange.contains(other: IntRange) = other.all { this.contains(it) }
 fun IntRange.overlaps(other: IntRange) = other.intersect(this).isNotEmpty()
 
+fun IntRange.size() = this.last - this.first
+
 fun List<IntRange>.reduce(): List<IntRange> =
     if (this.size <= 1) this
     else {
@@ -178,7 +180,24 @@ fun List<IntRange>.reduce(): List<IntRange> =
         }
     }
 
-fun IntRange.size() = this.last - this.first
+fun List<LongRange>.mergeOverlap(): List<LongRange> =
+    if (this.size <= 1) this
+    else {
+        val sorted = this.sortedBy { it.first }
+        sorted.drop(1).fold(mutableListOf(sorted.first())) { reduced, range ->
+            val lastRange = reduced.last()
+            if (range.first <= lastRange.last)
+                reduced[reduced.lastIndex] = (lastRange.first..maxOf(lastRange.last, range.last))
+            else
+                reduced.add(range)
+            reduced
+        }
+    }
+
+fun LongRange.size() = this.last - this.first
+
+fun LongRange.contains(other: LongRange) = other.all { this.contains(it) }
+fun LongRange.overlaps(other: LongRange) = other.intersect(this).isNotEmpty()
 
 fun <T> T?.logNullable() = println(this).let { this }
 fun <T> T.log() = println(this).let { this }
