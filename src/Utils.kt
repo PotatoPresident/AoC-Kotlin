@@ -51,11 +51,15 @@ fun String.findDigits(): List<Int> = Regex("""\d""").findAll(this).map { it.valu
 fun String.toRange() = split("-").ints().let { it[0]..it[1] }
 fun String.toLongRange() = split("-").longs().let { it[0]..it[1] }
 
+fun String.splitWhitespace(): List<String> = this.split("\\s+".toRegex())
+
 fun List<String>.ints() = map(String::toInt)
 fun List<String>.longs() = map(String::toLong)
 fun List<String>.csv() = map { it.split(",") }
 fun List<String>.mapToChars() = map { it.toCharArray().toList() }
 fun List<String>.toCharGrid() = mapToChars().toGrid()
+fun List<String>.transpose() = this.map { it.toList() }.transpose()
+
 fun Iterable<Any>.join() = joinToString("")
 inline fun <T> Iterable<T>.splitOn(predicate: (T) -> Boolean): List<List<T>> {
     val d = mutableListOf<List<T>>()
