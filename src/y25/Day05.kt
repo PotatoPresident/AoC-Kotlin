@@ -3,6 +3,7 @@ package y25
 import longs
 import puzzle
 import mergeOverlap
+import size
 import splitOnEmpty
 import toLongRange
 
@@ -18,6 +19,6 @@ fun main() = puzzle(2025, 5) {
     }
 
     submit {
-        ranges.mergeOverlap().sumOf { it.last - it.first + 1 }
+        ranges.mergeOverlap().sumOf { it.size() + 1 }
     }
 }
