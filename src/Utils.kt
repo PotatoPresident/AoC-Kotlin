@@ -340,3 +340,47 @@ class Z3Context(): Context() {
 fun z3Context(action: Z3Context.() -> Any): Any {
     return action.invoke(Z3Context())
 }
+
+class DSU<T>(points: List<T>) {
+    private val parent = points.associateWith { it }.toMutableMap()
+    private val size = points.associateWith { 1 }.toMutableMap()
+
+    fun find(p: T): T {
+        if (parent[p] != p) {
+            parent[p] = find(parent[p]!!)
+        }
+        return parent[p]!!
+    }
+
+    fun union(p1: T, p2: T) {
+        val root1 = find(p1)
+        val root2 = find(p2)
+
+        if (root1 != root2) {
+            when {
+                size[root1]!! < size[root2]!! -> {
+                    parent[root1] = root2
+                    size[root2] = size[root2]!! + size[root1]!!
+                }
+
+                size[root1]!! > size[root2]!! -> {
+                    parent[root2] = root1
+                    size[root1] = size[root1]!! + size[root2]!!
+                }
+
+                else -> {
+                    parent[root2] = root1
+                    size[root1] = size[root1]!! + size[root2]!!
+                }
+            }
+        }
+    }
+    
+    fun areUnioned(p1: T, p2: T) = find(p1) == find(p2)
+
+    fun getSize(p: T): Int {
+        return size[find(p)]!!
+    }
+
+    fun sets(): Map<T, List<T>> = parent.keys.groupBy { this.find(it) }
+}
