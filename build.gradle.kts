@@ -14,7 +14,7 @@ dependencies {
     implementation("tools.aqua:z3-turnkey:4.12.2.1")
 
     // From https://github.com/sschr15/advent-of-code/tree/2024/z3
-    implementation(files("z3/kotlin-z3-wrapper.jar"))
+//    implementation(files("z3/kotlin-z3-wrapper.jar"))
 
     implementation("com.sschr15.aoc:runtime-components:0.9.0")
     compilerPlugin("com.sschr15.aoc:compiler-plugin:0.9.0")

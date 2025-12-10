@@ -1,7 +1,6 @@
 package y24
 
 import Point
-import com.sschr15.z3kt.z3
 import findInts
 import puzzle
 import splitOnEmpty
